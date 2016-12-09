@@ -1,3 +1,3 @@
 #!/bin/bash
 # starts the livedesktop script
-nohup livedesktop.sh >> /dev/null &
+nohup bash ./livedesktop.sh >> /dev/null &
