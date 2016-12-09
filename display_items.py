@@ -12,7 +12,7 @@ def clock_display(): # returns time in minutes and hours
 #=====================================================================
 
 display_items=[
-    ("Hello World!",50,10,60),
+    # ("Hello World!",50,10,60),
     (clock_display(),85,83,180)
 ]
 
