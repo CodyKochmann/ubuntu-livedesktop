@@ -2,7 +2,10 @@
 # @Author: cody
 # @Date:   2016-12-09 10:32:44
 # @Last Modified 2016-12-11
-# @Last Modified time: 2016-12-11 08:09:30
+# @Last Modified time: 2016-12-11 08:30:15
+
+#from os import nice
+#nice(20)
 
 from PIL import Image, ImageDraw, ImageFont
 from veripy import veripy
@@ -69,13 +72,13 @@ def clean_tmp_images():
     from os import system
     system("rm tmp.*.jpg")
 
+
 #=====================================================================
 
 def main():
     global settings
     output_file = "tmp.{}.jpg".format(timestamp())
     base = Image.open(settings['background-path'])
-
     for m in display_items:
         base = add_text(
             base,
@@ -93,5 +96,5 @@ def restart_script():
 if __name__ == '__main__':
     from time import sleep
     main()
-    sleep(10)
+    sleep(45)
     restart_script()
