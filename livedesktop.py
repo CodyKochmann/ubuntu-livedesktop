@@ -1,20 +1,26 @@
 # -*- coding: utf-8 -*-
 # @Author: cody
 # @Date:   2016-12-09 10:32:44
-# @Last Modified 2016-12-09
-# @Last Modified time: 2016-12-09 11:52:05
+# @Last Modified 2016-12-11
+# @Last Modified time: 2016-12-11 08:09:30
 
 from PIL import Image, ImageDraw, ImageFont
 from veripy import veripy
 
-target_file = "background.jpg"
-output_file = "tmp.background.jpg"
+from display_items import display_items, settings
 
-settings={
-    'font-file':"liberation-mono-regular.ttf",
-    'color':(255,255,255,255),
+#output_file = "tmp.background.jpg"
 
-}
+def timestamp(human_readable=False):
+    # Generates a unix timestamp and a human readable timestamp if passed True
+    # by: Cody Kochmann
+    from calendar import timegm
+    from datetime import datetime
+    if human_readable:
+        return(datetime.now())
+    else:
+        return(timegm(datetime.now().utctimetuple()))
+
 
 def change_wallpaper(path):
     veripy.str(path)
@@ -24,7 +30,7 @@ def change_wallpaper(path):
     from os.path import isfile
     path = abspath(path)
     assert isfile(path)
-    bash('gsettings set org.gnome.desktop.background picture-uri "file://{}"'.format(path))
+    bash('chbackground "{}"'.format(path))
 
 def add_text(base,message,top,left,fontsize):
     veripy.str(message)
@@ -59,17 +65,33 @@ def add_text(base,message,top,left,fontsize):
     # combine the two layers
     return Image.alpha_composite(base, text_layer)
 
+def clean_tmp_images():
+    from os import system
+    system("rm tmp.*.jpg")
+
 #=====================================================================
 
-base = Image.open(target_file)
+def main():
+    global settings
+    output_file = "tmp.{}.jpg".format(timestamp())
+    base = Image.open(settings['background-path'])
 
-from display_items import display_items
+    for m in display_items:
+        base = add_text(
+            base,
+            *m
+        )
+    clean_tmp_images()
+    base.save(output_file)
+    change_wallpaper(output_file)
 
-for m in display_items:
-    base = add_text(
-        base,
-        *m
-    )
+def restart_script():
+    from os import system
+    system("nohup python livedesktop.py >> /dev/null &")
+    exit()
 
-base.save(output_file)
-change_wallpaper(output_file)
+if __name__ == '__main__':
+    from time import sleep
+    main()
+    sleep(10)
+    restart_script()
